@@ -49,6 +49,10 @@ pub(crate) fn translate_ty<'tcx, N: Namer<'tcx>>(
         Tuple(args) => MlT::Tuple(args.iter().map(|t| translate_ty(ctx, names, span, t)).collect()),
         Param(_) => MlT::TConstructor(names.ty_param(ty)),
         Alias(AliasTyKind::Projection, pty) => translate_projection_ty(ctx, names, pty),
+        Alias(AliasTyKind::Opaque, AliasTy { args, def_id, .. }) => {
+            let name = names.ty(*def_id, args);
+            MlT::TConstructor(name)
+        }
         Ref(_, ty, borkind) => {
             use rustc_ast::Mutability::*;
             match borkind {
