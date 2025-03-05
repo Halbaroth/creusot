@@ -630,7 +630,8 @@ impl<'body, 'tcx> BodyTranslator<'body, 'tcx> {
                     }
                 }
 
-                TyKind::Array(_, _) | TyKind::Slice(_) | TyKind::Pat(_, _) => todo!(),
+                TyKind::Array(_, _) | TyKind::Slice(_) | TyKind::Pat(_, _) =>
+                    unreachable!("{}", ty.ty),
 
                 TyKind::Bool
                 | TyKind::Char
