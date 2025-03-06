@@ -1,12 +1,11 @@
 use crate::{
-    Default,
     invariant::*,
     resolve::structural_resolve,
     std::{
         ops::{Deref, DerefMut, Index, IndexMut},
         slice::SliceIndex,
     },
-    *,
+    Default, *,
 };
 #[cfg(feature = "nightly")]
 use ::std::alloc::Allocator;
@@ -288,6 +287,27 @@ impl<T, A: Allocator> Iterator for std::vec::IntoIter<T, A> {
     #[requires(b.produces(bc, c))]
     #[ensures(a.produces(ab.concat(bc), c))]
     fn produces_trans(a: Self, ab: Seq<T>, b: Self, bc: Seq<T>, c: Self) {}
+}
+
+#[cfg(feature = "nightly")]
+impl<T, A: Allocator> crate::std::iter::DoubleEndedIterator for std::vec::IntoIter<T, A> {
+    #[predicate(prophetic)]
+    #[open]
+    fn produces_back(self, visited: Seq<Self::Item>, o: Self) -> bool {
+        pearlite! { false }
+    }
+
+    #[law]
+    #[open]
+    #[ensures(self.produces_back(Seq::EMPTY, self))]
+    fn produces_back_refl(self) {}
+
+    #[law]
+    #[open]
+    #[requires(a.produces_back(ab, b))]
+    #[requires(b.produces_back(bc, c))]
+    #[ensures(a.produces_back(ab.concat(bc), c))]
+    fn produces_back_trans(a: Self, ab: Seq<Self::Item>, b: Self, bc: Seq<Self::Item>, c: Self) {}
 }
 
 impl<T> FromIterator<T> for Vec<T> {
