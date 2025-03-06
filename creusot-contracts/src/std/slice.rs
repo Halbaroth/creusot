@@ -433,6 +433,26 @@ impl<'a, T> Iterator for Iter<'a, T> {
     fn produces_trans(a: Self, ab: Seq<Self::Item>, b: Self, bc: Seq<Self::Item>, c: Self) {}
 }
 
+impl<'a, T> crate::std::iter::DoubleEndedIterator for Iter<'a, T> {
+    #[predicate(prophetic)]
+    #[open]
+    fn produces_back(self, visited: Seq<Self::Item>, o: Self) -> bool {
+        pearlite! { false }
+    }
+
+    #[law]
+    #[open]
+    #[ensures(self.produces_back(Seq::EMPTY, self))]
+    fn produces_back_refl(self) {}
+
+    #[law]
+    #[open]
+    #[requires(a.produces_back(ab, b))]
+    #[requires(b.produces_back(bc, c))]
+    #[ensures(a.produces_back(ab.concat(bc), c))]
+    fn produces_back_trans(a: Self, ab: Seq<Self::Item>, b: Self, bc: Seq<Self::Item>, c: Self) {}
+}
+
 impl<'a, T> View for IterMut<'a, T> {
     type ViewTy = &'a mut [T];
 
@@ -485,4 +505,24 @@ impl<'a, T> Iterator for IterMut<'a, T> {
     #[requires(b.produces(bc, c))]
     #[ensures(a.produces(ab.concat(bc), c))]
     fn produces_trans(a: Self, ab: Seq<Self::Item>, b: Self, bc: Seq<Self::Item>, c: Self) {}
+}
+
+impl<'a, T> crate::std::iter::DoubleEndedIterator for IterMut<'a, T> {
+    #[predicate(prophetic)]
+    #[open]
+    fn produces_back(self, visited: Seq<Self::Item>, o: Self) -> bool {
+        pearlite! { false }
+    }
+
+    #[law]
+    #[open]
+    #[ensures(self.produces_back(Seq::EMPTY, self))]
+    fn produces_back_refl(self) {}
+
+    #[law]
+    #[open]
+    #[requires(a.produces_back(ab, b))]
+    #[requires(b.produces_back(bc, c))]
+    #[ensures(a.produces_back(ab.concat(bc), c))]
+    fn produces_back_trans(a: Self, ab: Seq<Self::Item>, b: Self, bc: Seq<Self::Item>, c: Self) {}
 }
