@@ -200,13 +200,11 @@ extern_spec! {
                     where Self: Sized + DoubleEndedIterator;
             }
 
-            trait IntoIterator
-                where Self: IntoIterator {
+            trait IntoIterator {
 
                 #[requires(self.into_iter_pre())]
                 #[ensures(self.into_iter_post(result))]
-                fn into_iter(self) -> Self::IntoIter
-                    where Self::IntoIter: Iterator;
+                fn into_iter(self) -> Self::IntoIter;
             }
 
             trait FromIterator<A>
