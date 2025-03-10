@@ -66,8 +66,8 @@ pub trait Iterator: ::std::iter::Iterator {
 }
 
 pub trait IntoIterator: ::std::iter::IntoIterator
-where
-    Self::IntoIter: Iterator,
+/* where
+    Self::IntoIter: Iterator, */
 {
     #[predicate]
     #[open]
