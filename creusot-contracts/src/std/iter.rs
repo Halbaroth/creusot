@@ -87,7 +87,7 @@ pub trait DoubleEndedIteratorSpec: DoubleEndedIterator + IteratorSpec {
 extern_spec! {
     mod std {
         mod iter {
-            pub trait Iterator
+            trait Iterator
                 where Self: IteratorSpec {
 
                 #[ensures(match result {
