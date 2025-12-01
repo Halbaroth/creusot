@@ -499,6 +499,29 @@ impl<'a, T> IteratorSpec for Iter<'a, T> {
     fn produces_trans(a: Self, ab: Seq<Self::Item>, b: Self, bc: Seq<Self::Item>, c: Self) {}
 }
 
+impl<'a, T> DoubleEndedIteratorSpec for Iter<'a, T> {
+    #[logic(open)]
+    fn produces_back(self, visited: Seq<Self::Item>, o: Self) -> bool {
+        pearlite! {
+            self.start == o.start && self.end.deep_model() >= o.end.deep_model()
+            && (visited.len() > 0 ==> o.end.deep_model() >= o.start.deep_model())
+            && visited.len() == o.end.deep_model() - self.end.deep_model()
+            && forall<i> 0 <= i && i < visited.len() ==>
+                visited[i].deep_model() == self.end.deep_model() - i
+        }
+    }
+
+    #[logic(law)]
+    #[ensures(self.produces_back(Seq::empty(), self))]
+    fn produces_back_refl(self) {}
+
+    #[logic(law)]
+    #[requires(a.produces_back(ab, b))]
+    #[requires(b.produces_back(bc, c))]
+    #[ensures(a.produces_back(ab.concat(bc), c))]
+    fn produces_back_trans(a: Self, ab: Seq<Self::Item>, b: Self, bc: Seq<Self::Item>, c: Self) {}
+}
+
 impl<'a, T> View for IterMut<'a, T> {
     type ViewTy = &'a mut [T];
 
